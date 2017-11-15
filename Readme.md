@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Тимур Резуненко](https://up.htmlacademy.ru/javascript/11/user/231296).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Буртылев](https://htmlacademy.ru/profile/id3341).
 
 ---
 

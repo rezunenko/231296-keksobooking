@@ -1,6 +1,6 @@
 'use strict';
 
-function getInitialPosts(count) {
+function getInitialPosts() {
   var titles = [
     'Большая уютная квартира',
     'Маленькая неуютная квартира',
@@ -24,7 +24,7 @@ function getInitialPosts(count) {
   var x = 0;
   var y = 0;
 
-  for (var i = 0; i < count; i++) {
+  for (var i = 0; i < titles.length; i++) {
     x = getRandomValue(xRange.max, xRange.min);
     y = getRandomValue(yRange.max, yRange.min);
     posts.push({
@@ -53,6 +53,34 @@ function getInitialPosts(count) {
 
   return posts;
 }
+
+function createMapPin(post) {
+  var pinSize = 40;
+  var btn = document.createElement('button');
+  var img = document.createElement('img');
+  btn.style.left = (post.location.x - pinSize / 2) + 'px';
+  btn.style.top = (post.location.y - pinSize / 2) + 'px';
+  btn.className = 'map__pin';
+  img.src = post.author.avatar;
+  img.width = pinSize;
+  img.height = pinSize;
+  img.draggable = false;
+  btn.appendChild(img);
+  
+  return btn;
+}
+
+function drawMapPins() {
+  var posts = getInitialPosts(8);
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < posts.length; i++) {
+    fragment.appendChild(createMapPin(posts[i]));
+  }
+  document.querySelector('.map__pins').appendChild(fragment);
+}
+
+drawMapPins();
 
 function getRandomValue(max, min, precision) {
   precision = precision || 0;

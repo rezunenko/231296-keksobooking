@@ -40,7 +40,7 @@ function getInitialPosts() {
         guests: getRandomValue(guestRange.max, guestRange.min),
         checkin: getRandomArrayItem(times),
         checkout: getRandomArrayItem(times),
-        features: getRandomArrayItem(features),
+        features: getRandomArraySubset(features),
         description: '',
         photos: []
       },
@@ -88,6 +88,23 @@ function getRandomValue(max, min, precision) {
   var random = Math.random() * (max - min) + min;
 
   return Math.round(random * Math.pow(10, precision)) / Math.pow(10, precision);
+}
+
+function getRandomArraySubset(arr) {
+  var subsetLength = getRandomValue(arr.length - 1);
+  var subset = [];
+  var item = null;
+
+  for (var i = 0; i < subsetLength; i++) {
+      item = arr[getRandomValue(arr.length - 1)];
+      if(subset.indexOf(item) + 1) {
+        i--;
+      } else {
+        subset.push(item);
+      }
+  }
+
+  return subset;
 }
 
 function getRandomArrayItem(arr) {

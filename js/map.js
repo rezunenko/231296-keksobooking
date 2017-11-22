@@ -59,7 +59,7 @@ function createMapPin(post) {
   var btn = document.createElement('button');
   var img = document.createElement('img');
   btn.style.left = (post.location.x - pinSize / 2) + 'px';
-  btn.style.top = (post.location.y - pinSize / 2) + 'px';
+  btn.style.top = (post.location.y - pinSize) + 'px';
   btn.className = 'map__pin';
   img.src = post.author.avatar;
   img.width = pinSize;
@@ -70,7 +70,7 @@ function createMapPin(post) {
   return btn;
 }
 
-function drawMapPins() {
+function renderMapPins() {
   var posts = getInitialPosts(8);
   var fragment = document.createDocumentFragment();
 
@@ -80,7 +80,7 @@ function drawMapPins() {
   document.querySelector('.map__pins').appendChild(fragment);
 }
 
-drawMapPins();
+renderMapPins();
 
 function getRandomValue(max, min, precision) {
   precision = precision || 0;

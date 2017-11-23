@@ -66,12 +66,11 @@ function createMapPin(post) {
   img.height = pinSize;
   img.draggable = false;
   btn.appendChild(img);
-  
+
   return btn;
 }
 
-function renderMapPins() {
-  var posts = getInitialPosts(8);
+function renderMapPins(posts) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < posts.length; i++) {
@@ -80,7 +79,43 @@ function renderMapPins() {
   document.querySelector('.map__pins').appendChild(fragment);
 }
 
-renderMapPins();
+function renderMapPopup(post) {
+  var template = document.querySelector('template').content.querySelector('article.map__card');
+  var popupTemplate = template.cloneNode(true);
+  var dictionary = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом'
+  };
+  var postType = popupTemplate.querySelector('h4');
+  var features = popupTemplate.querySelector('.popup__features');
+  var featuresFragment = document.createDocumentFragment();
+  popupTemplate.querySelector('.popup__avatar').src = post.author.avatar;
+  popupTemplate.querySelector('h3').textContent = post.offer.title;
+  popupTemplate.querySelector('small').textContent = post.offer.address;
+  popupTemplate.querySelector('.popup__price').innerHTML = post.offer.price + '&#x20bd;/ночь';
+  postType.textContent = dictionary[post.offer.type];
+  postType.nextElementSibling.textContent = post.offer.rooms + ' комнаты для ' + post.offer.guests + ' гостей';
+  postType.nextElementSibling.nextElementSibling.textContent = 'заезд после ' + post.offer.checkin + ' , выезд до ' + post.offer.checkout;
+  popupTemplate.querySelector('.popup__features').innerHTML = '';
+  for (var i = 0; i < post.offer.features.length; i++) {
+    var li = document.createElement('li');
+    li.className = 'feature  feature--' + post.offer.features[i];
+    featuresFragment.appendChild(li);
+  }
+  features.appendChild(featuresFragment);
+  features.nextElementSibling.textContent = post.offer.description;
+
+  document.querySelector('.map').appendChild(popupTemplate);
+}
+
+function renderMap() {
+  var posts = getInitialPosts();
+  renderMapPins(posts);
+  renderMapPopup(posts[0]);
+}
+
+renderMap();
 
 function getRandomValue(max, min, precision) {
   precision = precision || 0;
@@ -96,12 +131,12 @@ function getRandomArraySubset(arr) {
   var item = null;
 
   for (var i = 0; i < subsetLength; i++) {
-      item = arr[getRandomValue(arr.length - 1)];
-      if(subset.indexOf(item) + 1) {
-        i--;
-      } else {
-        subset.push(item);
-      }
+    item = arr[getRandomValue(arr.length - 1)];
+    if (subset.indexOf(item) + 1) {
+      i--;
+    } else {
+      subset.push(item);
+    }
   }
 
   return subset;

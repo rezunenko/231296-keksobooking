@@ -1,4 +1,6 @@
 'use strict';
+var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 var posts = [];
 
 document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
@@ -20,14 +22,19 @@ function initPosts() {
     renderMapPins(posts);
     var pins = document.querySelectorAll('.map__pin');
     for (var j = 0; j < pins.length; j++) {
-      pins[j].addEventListener('click', onClickPin);
+      pins[j].addEventListener('click', onOpenPin);
+      pins[j].addEventListener('keydown', onOpenPin);
     }
   }
 }
 
-function onClickPin(e) {
+function onOpenPin(e) {
   var pin = e.currentTarget;
   var id = pin.dataset.id;
+  if (e.type === 'keydown' && e.keyCode !== ENTER_KEYCODE) {
+    return;
+  }
+
   deactivatePins();
   pin.classList.add('map__pin--active');
 
@@ -167,12 +174,21 @@ function showPopup(object) {
     map.removeChild(oldPopup);
   }
   var newPopupElement = map.appendChild(object);
-  newPopupElement.addEventListener('click', function (e) {
-    if (e.target.classList.contains('popup__close')) {
-      e.currentTarget.setAttribute('hidden', '');
-      deactivatePins();
-    }
-  });
+  newPopupElement.addEventListener('click', onPopupClose);
+  document.addEventListener('keydown', onPopupClose);
+}
+
+function onPopupClose(e) {
+  var popup = document.querySelector('.map__card.popup');
+  if (e.type === 'keydown' && e.keyCode !== ESC_KEYCODE
+    || e.type === 'click' && !e.target.classList.contains('popup__close')) {
+    return;
+  }
+
+  popup.setAttribute('hidden', '');
+  popup.removeEventListener('click', onPopupClose);
+  document.removeEventListener('keydown', onPopupClose);
+  deactivatePins();
 }
 
 function getRandomValue(max, min, precision) {

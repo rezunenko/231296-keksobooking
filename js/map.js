@@ -1,12 +1,19 @@
 'use strict';
 var ENTER_KEYCODE = 13;
 var ESC_KEYCODE = 27;
-var posts = [];
+var posts = getInitialPosts();
+var activePin = null;
 
 document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
 
 function showForm() {
-  initPosts();
+  renderMapPins(posts);
+  var pins = document.querySelectorAll('.map__pin');
+  for (var j = 0; j < pins.length; j++) {
+    pins[j].addEventListener('click', onOpenPin);
+    pins[j].addEventListener('keydown', onOpenPin);
+  }
+  
   var fieldsets = document.querySelectorAll('.notice__form fieldset[disabled]');
   document.querySelector('.map').classList.remove('map--faded');
   document.querySelector('.notice__form').classList.remove('notice__form--disabled');
@@ -14,41 +21,24 @@ function showForm() {
   for (var i = 0; i < fieldsets.length; i++) {
     fieldsets[i].removeAttribute('disabled');
   }
-}
-
-function initPosts() {
-  if (!posts || !posts.length) {
-    posts = getInitialPosts();
-    renderMapPins(posts);
-    var pins = document.querySelectorAll('.map__pin');
-    for (var j = 0; j < pins.length; j++) {
-      pins[j].addEventListener('click', onOpenPin);
-      pins[j].addEventListener('keydown', onOpenPin);
-    }
-  }
+  document.querySelector('.map__pin--main').removeEventListener('mouseup', showForm)
 }
 
 function onOpenPin(e) {
-  var pin = e.currentTarget;
-  var id = pin.dataset.id;
+  var currentPin = e.currentTarget;
+  var id = currentPin.dataset.id;
   if (e.type === 'keydown' && e.keyCode !== ENTER_KEYCODE) {
     return;
   }
-
-  deactivatePins();
-  pin.classList.add('map__pin--active');
+  if (activePin) {
+    activePin.classList.remove('map__pin--active');
+  }
+  currentPin.classList.add('map__pin--active');
+  activePin = currentPin;
 
   if (id > 0) {
     var popup = renderMapPopup(posts[id - 1]);
     showPopup(popup);
-  }
-}
-
-function deactivatePins() {
-  var pins = document.querySelectorAll('.map__pin');
-
-  for (var j = 0; j < pins.length; j++) {
-    pins[j].classList.remove('map__pin--active');
   }
 }
 
@@ -75,13 +65,13 @@ function getInitialPosts() {
   var postList = [];
   var x = 0;
   var y = 0;
-  var postIdCounter = counter();
+  var postIdCounter = 0;
 
   for (var i = 0; i < titles.length; i++) {
     x = getRandomValue(xRange.max, xRange.min);
     y = getRandomValue(yRange.max, yRange.min);
     postList.push({
-      id: postIdCounter(),
+      id: postIdCounter++,
       author: {
         avatar: 'img/avatars/user' + suplementWithZero(users[i], 2) + '.png'
       },
@@ -231,13 +221,4 @@ function suplementWithZero(value, precision) {
     result = '0' + result;
   }
   return result;
-}
-
-function counter() {
-  var currentId = 1;
-
-  return function () {
-
-    return currentId++;
-  };
 }

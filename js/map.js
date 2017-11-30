@@ -240,8 +240,7 @@ var onChangeHousingType = function (e) {
   document.querySelector('#price').min = housingMinList[e.target.value];
 };
 
-
-var showForm = function() {
+var showForm = function () {
   renderMapPins(posts);
   var pins = document.querySelectorAll('.map__pin');
   for (var j = 0; j < pins.length; j++) {
@@ -257,7 +256,7 @@ var showForm = function() {
     fieldsets[i].removeAttribute('disabled');
   }
   document.querySelector('.map__pin--main').removeEventListener('mouseup', showForm);
-  document.querySelector('#title').addEventListener('input', function(e) {
+  document.querySelector('#title').addEventListener('input', function (e) {
     var target = e.target;
     var minLength = parseInt(e.target.getAttribute('minLength'), 10);
     if (minLength && target.value.length < minLength) {

@@ -1,12 +1,12 @@
 'use strict';
 
-(function() {
+(function () {
   var ESC_KEYCODE = 27;
   var mapPopupTemplate = document.querySelector('template').content.querySelector('article.map__card');
   var map = document.querySelector('.map');
   window.activePin = null;
 
-  window.renderMapPopup = function(post) {
+  window.renderMapPopup = function (post) {
     var popupTemplate = mapPopupTemplate.cloneNode(true);
     var dictionary = {
       'flat': 'Квартира',
@@ -35,7 +35,7 @@
     return popupTemplate;
   };
 
-  var onPopupClose = function(e) {
+  var onPopupClose = function (e) {
     var popup = document.querySelector('.map__card.popup');
     if (e.type === 'keydown' && e.keyCode !== ESC_KEYCODE
       || e.type === 'click' && !e.target.classList.contains('popup__close')) {
@@ -48,7 +48,7 @@
     window.activePin.classList.remove('map__pin--active');
   };
 
-  window.showPopup = function(object) {
+  window.showPopup = function (object) {
     var oldPopup = map.querySelector('.map__card');
 
     if (oldPopup) {

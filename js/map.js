@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function () {
   var ENTER_KEYCODE = 13;
   var mapPins = document.querySelector('.map__pins');
   var REQUIERED_SUBJECTS = [
@@ -22,7 +22,7 @@
     throw new Error('To use the module the following subjects should be declared in the global scope: ' + _undefinedSubjects.join(', '));
   }
 
-  window.renderMapPins = function(postList) {
+  window.renderMapPins = function (postList) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < postList.length; i++) {
@@ -32,7 +32,7 @@
     mapPins.appendChild(fragment);
   };
 
-  window.onOpenPin = function(e) {
+  window.onOpenPin = function (e) {
     var currentPin = e.currentTarget;
     var id = currentPin.dataset.id;
     if (e.type === 'keydown' && e.keyCode !== ENTER_KEYCODE) {

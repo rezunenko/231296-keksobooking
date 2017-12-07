@@ -37,7 +37,7 @@
     var types = ['flat', 'house', 'bungalo'];
     var times = ['12:00', '13:00', '14:00'];
     var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-    var priceRange = {min: 1000, max: 1000000 };
+    var priceRange = {min: 1000, max: 1000000};
     var roomsRange = {min: 1, max: 5};
     var guestRange = {min: 1, max: 4};
     var xRange = {min: 300, max: 900};

@@ -1,12 +1,8 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
   var mapPopupTemplate = document.querySelector('template').content.querySelector('article.map__card');
-  var map = document.querySelector('.map');
-  var activePin = null;
-
-  var renderMapPopup = function (post) {
+  var createPopup = function (post) {
     var popupTemplate = mapPopupTemplate.cloneNode(true);
     var dictionary = {
       'flat': 'Квартира',
@@ -35,33 +31,7 @@
     return popupTemplate;
   };
 
-  var onPopupClose = function (e) {
-    var popup = document.querySelector('.map__card.popup');
-    if (e.type === 'keydown' && e.keyCode !== ESC_KEYCODE
-      || e.type === 'click' && !e.target.classList.contains('popup__close')) {
-      return;
-    }
-
-    popup.setAttribute('hidden', '');
-    popup.removeEventListener('click', onPopupClose);
-    document.removeEventListener('keydown', onPopupClose);
-    activePin.classList.remove('map__pin--active');
-  };
-
-  var showPopup = function (object) {
-    var oldPopup = map.querySelector('.map__card');
-
-    if (oldPopup) {
-      map.removeChild(oldPopup);
-    }
-    var newPopupElement = map.appendChild(object);
-    newPopupElement.addEventListener('click', onPopupClose);
-    document.addEventListener('keydown', onPopupClose);
-  };
-
   window.card = {
-    activePin: activePin,
-    renderMapPopup: renderMapPopup,
-    showPopup: showPopup
+    createPopup: createPopup
   };
 })();

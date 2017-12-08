@@ -12,24 +12,6 @@
   var capacitySelector = document.querySelector('#capacity');
   var price = document.querySelector('#price');
 
-  var REQUIERED_SUBJECTS = [
-    'renderMapPins',
-    'posts',
-    'onOpenPin'
-  ];
-
-  var _undefinedSubjects = [];
-
-  for (var j = 0; j < REQUIERED_SUBJECTS.length; j++) {
-    if (!window[REQUIERED_SUBJECTS[j]]) {
-      _undefinedSubjects.push(REQUIERED_SUBJECTS[j]);
-    }
-  }
-
-  if (_undefinedSubjects.length > 0) {
-    throw new Error('To use the module the following subjects should be declared in the global scope: ' + _undefinedSubjects.join(', '));
-  }
-
   var onChangeTime = function (e) {
     var target = e.target;
     (target.id === 'timein' ? timeout : timin).value = target.value;
@@ -61,18 +43,11 @@
   };
 
   var showForm = function () {
-    window.renderMapPins(window.posts);
-    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].addEventListener('click', window.onOpenPin);
-      pins[i].addEventListener('keydown', window.onOpenPin);
-    }
-
     var fieldsets = document.querySelectorAll('.notice__form fieldset[disabled]');
     document.querySelector('.map').classList.remove('map--faded');
     document.querySelector('.notice__form').classList.remove('notice__form--disabled');
 
-    for (i = 0; i < fieldsets.length; i++) {
+    for (var i = 0; i < fieldsets.length; i++) {
       fieldsets[i].removeAttribute('disabled');
     }
     document.querySelector('.map__pin--main').removeEventListener('mouseup', showForm);

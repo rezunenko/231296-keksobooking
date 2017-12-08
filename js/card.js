@@ -4,9 +4,9 @@
   var ESC_KEYCODE = 27;
   var mapPopupTemplate = document.querySelector('template').content.querySelector('article.map__card');
   var map = document.querySelector('.map');
-  window.activePin = null;
+  var activePin = null;
 
-  window.renderMapPopup = function (post) {
+  var renderMapPopup = function (post) {
     var popupTemplate = mapPopupTemplate.cloneNode(true);
     var dictionary = {
       'flat': 'Квартира',
@@ -45,10 +45,10 @@
     popup.setAttribute('hidden', '');
     popup.removeEventListener('click', onPopupClose);
     document.removeEventListener('keydown', onPopupClose);
-    window.activePin.classList.remove('map__pin--active');
+    activePin.classList.remove('map__pin--active');
   };
 
-  window.showPopup = function (object) {
+  var showPopup = function (object) {
     var oldPopup = map.querySelector('.map__card');
 
     if (oldPopup) {
@@ -57,5 +57,11 @@
     var newPopupElement = map.appendChild(object);
     newPopupElement.addEventListener('click', onPopupClose);
     document.addEventListener('keydown', onPopupClose);
+  };
+
+  window.card = {
+    activePin: activePin,
+    renderMapPopup: renderMapPopup,
+    showPopup: showPopup
   };
 })();

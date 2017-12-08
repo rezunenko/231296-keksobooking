@@ -4,7 +4,7 @@
   var PIN_SIZE = 40;
   var PIN_TAIL_HEIGHT = 18;
 
-  window.createPin = function (post) {
+  var createPin = function (post) {
     var btn = document.createElement('button');
     var img = document.createElement('img');
     btn.style.left = post.location.x + 'px';
@@ -18,6 +18,10 @@
     btn.appendChild(img);
 
     return btn;
+  };
+
+  window.pin = {
+    createPin: createPin
   };
 
 })();

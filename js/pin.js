@@ -3,6 +3,7 @@
 (function () {
   var PIN_SIZE = 40;
   var PIN_TAIL_HEIGHT = 18;
+  var activePin = null;
 
   var createPin = function (post) {
     var btn = document.createElement('button');
@@ -20,8 +21,27 @@
     return btn;
   };
 
+  var deactivate = function () {
+    if (activePin) {
+      activePin.classList.remove('map__pin--active');
+    }
+  };
+
+  var activate = function(pin) {
+    pin.classList.add('map__pin--active');
+    activePin = pin;
+  };
+
+  var toggle = function(pin) {
+    deactivate();
+    activate(pin);
+  };
+
   window.pin = {
-    createPin: createPin
+    createPin: createPin,
+    deactivate: deactivate,
+    activate: activate,
+    toggle: toggle
   };
 
 })();

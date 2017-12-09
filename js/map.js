@@ -9,7 +9,6 @@
     'posts',
     'card'
   ];
-  var activePin = null;
   var map = document.querySelector('.map');
 
   var _undefinedModules = [];
@@ -64,11 +63,8 @@
     if (e.type === 'keydown' && e.keyCode !== ENTER_KEYCODE) {
       return;
     }
-    if (activePin) {
-      activePin.classList.remove('map__pin--active');
-    }
-    currentPin.classList.add('map__pin--active');
-    activePin = currentPin;
+
+    window.pin.toggle(currentPin);
 
     var popup = window.card.createPopup(window.posts[id - 1]);
     showPopup(popup);

@@ -27,12 +27,12 @@
     }
   };
 
-  var activate = function(pin) {
+  var activate = function (pin) {
     pin.classList.add('map__pin--active');
     activePin = pin;
   };
 
-  var toggle = function(pin) {
+  var toggle = function (pin) {
     deactivate();
     activate(pin);
   };

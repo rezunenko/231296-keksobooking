@@ -82,11 +82,11 @@
       y: e.clientY
     };
 
-    var onMouseMove = function (eMove) {
-      eMove.preventDefault();
+    var onMouseMove = function (evt) {
+      evt.preventDefault();
       var shift = {
-        x: startCoords.x - eMove.clientX,
-        y: startCoords.y - eMove.clientY
+        x: startCoords.x - evt.clientX,
+        y: startCoords.y - evt.clientY
       };
       var newY = mainPin.offsetTop - shift.y;
       var newX = mainPin.offsetLeft - shift.x;
@@ -95,16 +95,16 @@
       }
 
       startCoords = {
-        x: eMove.clientX,
-        y: eMove.clientY
+        x: evt.clientX,
+        y: evt.clientY
       };
 
       mainPin.style.top = newY + 'px';
       mainPin.style.left = newX + 'px';
     };
 
-    var onMouseUp = function (eUp) {
-      eUp.preventDefault();
+    var onMouseUp = function (evt) {
+      evt.preventDefault();
       var addressField = document.querySelector('#address');
       if (addressField) {
         addressField.value = 'x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}';

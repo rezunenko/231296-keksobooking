@@ -7,14 +7,52 @@
     house: 5000,
     palace: 10000
   };
-  var timin = document.querySelector('#timein');
-  var timeout = document.querySelector('#timeout');
+
   var capacitySelector = document.querySelector('#capacity');
   var price = document.querySelector('#price');
+  var timein = document.querySelector('#timein');
+  var timeout = document.querySelector('#timeout');
+  var housingType = document.querySelector('#type');
 
-  var onChangeTime = function (e) {
-    var target = e.target;
-    (target.id === 'timein' ? timeout : timin).value = target.value;
+  var getSelectValues = function (select) {
+
+    return [].slice.apply(select.children || [])
+        .map(function (item) {
+          return item.value;
+        });
+  };
+
+  var timeinObj = {
+    elem: timein,
+    values: getSelectValues(timein)
+  };
+  var timeoutObj = {
+    elem: timeout,
+    values: getSelectValues(timeout)
+  };
+
+  var housingTypeObj = {
+    elem: housingType,
+    values: getSelectValues(housingType)
+  };
+
+  var housingPriceObj = {
+    elem: price,
+    values: Object.keys(HOUSING_MIN_PRICE).map(function (key) {
+
+      return HOUSING_MIN_PRICE[key];
+    })
+  };
+
+  var onChangeTime = function (element, value) {
+    element.value = value;
+  };
+
+  var onChangeHousingType = function (element, value) {
+    element.min = value;
+    if (+element.value < +element.min) {
+      element.value = value;
+    }
   };
 
   var onChangeRoomNumber = function (e) {
@@ -33,13 +71,6 @@
       }
     }
     capacitySelector.selectedIndex = capacitySelectedIndex;
-  };
-
-  var onChangeHousingType = function (e) {
-    price.min = HOUSING_MIN_PRICE[e.target.value];
-    if (+price.value < +price.min) {
-      price.value = price.min;
-    }
   };
 
   var showForm = function () {
@@ -62,9 +93,8 @@
     });
   };
 
-  document.querySelector('#type').addEventListener('change', onChangeHousingType);
-  document.querySelector('#timein').addEventListener('change', onChangeTime);
-  document.querySelector('#timeout').addEventListener('change', onChangeTime);
+  window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);
+  window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
   document.querySelector('#room_number').addEventListener('change', onChangeRoomNumber);
   document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
 })();

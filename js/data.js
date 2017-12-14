@@ -6,7 +6,7 @@
   }
 
   if (!window.backend.load) {
-    throw new Error('To use the backend module should be declared in the global scope');
+    throw new Error('The load function should be declared in the backend module');
   }
 
   var get = function (onLoad) {

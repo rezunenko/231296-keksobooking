@@ -136,6 +136,5 @@
     });
   };
 
-
   mainPin.addEventListener('mouseup', onRenderPins);
 })();

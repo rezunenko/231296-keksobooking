@@ -1,6 +1,14 @@
 'use strict';
 
 (function () {
+  if (!window.backend) {
+    throw new Error('To use the module, the backend module should be declared in the global scope');
+  }
+
+  if (!window.backend.save) {
+    throw new Error('The save function should be declared in the backend module');
+  }
+
   var HOUSING_MIN_PRICE = {
     bungalo: 0,
     flat: 1000,
@@ -8,6 +16,7 @@
     palace: 10000
   };
 
+  var form = document.querySelector('.notice__form');
   var capacitySelector = document.querySelector('#capacity');
   var price = document.querySelector('#price');
   var timein = document.querySelector('#timein');
@@ -97,4 +106,10 @@
   window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
   document.querySelector('#room_number').addEventListener('change', onChangeRoomNumber);
   document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
+
+  form.addEventListener('submit', function (e) {
+    window.backend.save(new FormData(form), function (response) {
+    }, function () {});
+    e.preventDefault();
+  });
 })();

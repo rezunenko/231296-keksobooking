@@ -22,6 +22,7 @@
   var timein = document.querySelector('#timein');
   var timeout = document.querySelector('#timeout');
   var housingType = document.querySelector('#type');
+  var addressField = document.querySelector('#address');
 
   var getSelectValues = function (select) {
 
@@ -102,10 +103,13 @@
     });
   };
 
+  var setAddress = function (address) {
+    addressField.value = address;
+  };
+
   window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);
   window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
   document.querySelector('#room_number').addEventListener('change', onChangeRoomNumber);
-  document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
 
   form.addEventListener('submit', function (e) {
     window.backend.save(new FormData(form), function () {
@@ -115,4 +119,9 @@
     });
     e.preventDefault();
   });
+
+  window.form = {
+    showForm: showForm,
+    setAddress: setAddress
+  };
 })();

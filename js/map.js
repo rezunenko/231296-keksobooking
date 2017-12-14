@@ -106,10 +106,7 @@
 
     var onMouseUp = function (evt) {
       evt.preventDefault();
-      var addressField = document.querySelector('#address');
-      if (addressField) {
-        addressField.value = 'x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}';
-      }
+      window.form.setAddress('x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}');
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -124,6 +121,7 @@
     window.posts.get(function (response) {
       posts = response;
       renderMapPins(posts);
+      window.form.showForm();
 
       var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
       for (var i = 0; i < pins.length; i++) {

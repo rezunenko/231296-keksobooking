@@ -12,7 +12,7 @@
   var get = function (onLoad) {
 
     var onError = function (msg) {
-      console.log(msg);
+      window.popup.show(msg);
     };
 
     window.backend.load(onLoad, onError);

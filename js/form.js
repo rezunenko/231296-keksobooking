@@ -108,8 +108,11 @@
   document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
 
   form.addEventListener('submit', function (e) {
-    window.backend.save(new FormData(form), function (response) {
-    }, function () {});
+    window.backend.save(new FormData(form), function () {
+      window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
+    }, function (msg) {
+      window.popup.show(msg);
+    });
     e.preventDefault();
   });
 })();

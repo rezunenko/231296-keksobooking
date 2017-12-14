@@ -34,11 +34,11 @@
       onError('Операция была отменена');
     });
 
-    xhr.addEventListener('error', function() {
+    xhr.addEventListener('error', function () {
       onError('Произошла ошибка соединения');
     });
 
-    xhr.addEventListener('timeout', function() {
+    xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 

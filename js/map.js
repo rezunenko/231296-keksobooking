@@ -11,6 +11,7 @@
     'card'
   ];
   var map = document.querySelector('.map');
+  var posts = null;
 
   var _undefinedModules = [];
 
@@ -28,7 +29,7 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < postList.length; i++) {
-      fragment.appendChild(window.pin.createPin(window.posts[i]));
+      fragment.appendChild(window.pin.createPin(postList[i]));
     }
 
     mapPins.appendChild(fragment);
@@ -67,7 +68,7 @@
 
     window.pin.toggle(currentPin);
 
-    var popup = window.card.createPopup(window.posts[id - 1]);
+    var popup = window.card.createPopup(posts[id - 1]);
     showPopup(popup);
   };
 
@@ -105,10 +106,7 @@
 
     var onMouseUp = function (evt) {
       evt.preventDefault();
-      var addressField = document.querySelector('#address');
-      if (addressField) {
-        addressField.value = 'x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}';
-      }
+      window.form.setAddress('x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}');
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -119,18 +117,22 @@
 
   var onRenderPins = function (e) {
     e.preventDefault();
-    renderMapPins(window.posts);
 
-    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].addEventListener('click', onOpenPin);
-      pins[i].addEventListener('keydown', onOpenPin);
-    }
+    window.posts.get(function (response) {
+      posts = response;
+      renderMapPins(posts);
+      window.form.showForm();
 
-    mainPin.addEventListener('mousedown', onDragStart);
-    mainPin.removeEventListener('mouseup', onRenderPins);
+      var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+      for (var i = 0; i < pins.length; i++) {
+        pins[i].addEventListener('click', onOpenPin);
+        pins[i].addEventListener('keydown', onOpenPin);
+      }
+
+      mainPin.addEventListener('mousedown', onDragStart);
+      mainPin.removeEventListener('mouseup', onRenderPins);
+    });
   };
-
 
   mainPin.addEventListener('mouseup', onRenderPins);
 })();

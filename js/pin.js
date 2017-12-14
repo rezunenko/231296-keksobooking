@@ -4,6 +4,7 @@
   var PIN_SIZE = 40;
   var PIN_TAIL_HEIGHT = 18;
   var activePin = null;
+  var id = 0;
 
   var createPin = function (post) {
     var btn = document.createElement('button');
@@ -11,7 +12,7 @@
     btn.style.left = post.location.x + 'px';
     btn.style.top = (post.location.y - (PIN_SIZE + PIN_TAIL_HEIGHT) / 2) + 'px';
     btn.className = 'map__pin';
-    btn.setAttribute('data-id', post.id);
+    btn.setAttribute('data-id', ++id);
     img.src = post.author.avatar;
     img.width = PIN_SIZE;
     img.height = PIN_SIZE;

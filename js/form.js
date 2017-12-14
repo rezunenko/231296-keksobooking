@@ -1,6 +1,14 @@
 'use strict';
 
 (function () {
+  if (!window.backend) {
+    throw new Error('To use the module, the backend module should be declared in the global scope');
+  }
+
+  if (!window.backend.save) {
+    throw new Error('The save function should be declared in the backend module');
+  }
+
   var HOUSING_MIN_PRICE = {
     bungalo: 0,
     flat: 1000,
@@ -8,11 +16,13 @@
     palace: 10000
   };
 
+  var form = document.querySelector('.notice__form');
   var capacitySelector = document.querySelector('#capacity');
   var price = document.querySelector('#price');
   var timein = document.querySelector('#timein');
   var timeout = document.querySelector('#timeout');
   var housingType = document.querySelector('#type');
+  var addressField = document.querySelector('#address');
 
   var getSelectValues = function (select) {
 
@@ -93,8 +103,25 @@
     });
   };
 
+  var setAddress = function (address) {
+    addressField.value = address;
+  };
+
   window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);
   window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
   document.querySelector('#room_number').addEventListener('change', onChangeRoomNumber);
-  document.querySelector('.map__pin--main').addEventListener('mouseup', showForm);
+
+  form.addEventListener('submit', function (e) {
+    window.backend.save(new FormData(form), function () {
+      window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
+    }, function (msg) {
+      window.popup.show(msg);
+    });
+    e.preventDefault();
+  });
+
+  window.form = {
+    showForm: showForm,
+    setAddress: setAddress
+  };
 })();

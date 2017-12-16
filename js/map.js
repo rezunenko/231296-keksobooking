@@ -12,6 +12,7 @@
   ];
   var map = document.querySelector('.map');
   var posts = null;
+  var pins = null;
 
   var _undefinedModules = [];
 
@@ -32,8 +33,17 @@
       fragment.appendChild(window.pin.createPin(postList[i]));
     }
 
-    mapPins.appendChild(fragment);
+    return mapPins.appendChild(fragment);
   };
+
+  var removeMapPins = function(postList) {
+    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    for (var i = 0; i < pins.length; i++) {
+      mapPins.removeChild(pins[i]);
+    }
+  };
+
 
   var onPopupClose = function (e) {
     var popup = document.querySelector('.map__card.popup');
@@ -68,7 +78,7 @@
 
     window.pin.toggle(currentPin);
 
-    var popup = window.card.createPopup(posts[id - 1]);
+    var popup = window.card.createPopup(posts[+id - 1]);
     showPopup(popup);
   };
 
@@ -115,24 +125,39 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var onRenderPins = function (e) {
+  var setPinEventListeners = function () {
+    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    Array.from(pins).forEach(function (pin) {
+      pin.addEventListener('click', onOpenPin);
+      pin.addEventListener('keydown', onOpenPin);
+    })
+  };
+
+  var onRenderPins = function (data) {
+    removeMapPins();
+    window.pin.clearCounter();
+    renderMapPins(data);
+    setPinEventListeners();
+  };
+
+  var onInitPins = function (e) {
     e.preventDefault();
 
     window.posts.get(function (response) {
-      posts = response;
+      var id = 1;
+      posts = response.map(function (item) {
+        item.id = id++;
+        return item;
+      });
       renderMapPins(posts);
+      setPinEventListeners();
+      window.filter.activate(response, onRenderPins);
       window.form.showForm();
-
-      var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-      for (var i = 0; i < pins.length; i++) {
-        pins[i].addEventListener('click', onOpenPin);
-        pins[i].addEventListener('keydown', onOpenPin);
-      }
-
       mainPin.addEventListener('mousedown', onDragStart);
-      mainPin.removeEventListener('mouseup', onRenderPins);
+      mainPin.removeEventListener('mouseup', onInitPins);
     });
   };
 
-  mainPin.addEventListener('mouseup', onRenderPins);
+  mainPin.addEventListener('mouseup', onInitPins);
+
 })();

@@ -10,7 +10,6 @@
     'posts',
     'card'
   ];
-  var map = document.querySelector('.map');
   var posts = [];
   var pins = [];
 
@@ -26,28 +25,14 @@
     throw new Error('To use the module the following subjects should be declared in the global scope: ' + _undefinedModules.join(', '));
   }
 
-  var onPopupClose = function (e) {
-    var popup = document.querySelector('.map__card.popup');
+  var onCardClose = function (e) {
     if (e.type === 'keydown' && e.keyCode !== ESC_KEYCODE
       || e.type === 'click' && !e.target.classList.contains('popup__close')) {
       return;
     }
 
-    popup.setAttribute('hidden', '');
-    popup.removeEventListener('click', onPopupClose);
-    document.removeEventListener('keydown', onPopupClose);
     window.pin.deactivate();
-  };
-
-  var showPopup = function (popup) {
-    var oldPopup = map.querySelector('.map__card');
-    if (oldPopup) {
-      map.removeChild(oldPopup);
-    }
-
-    var newPopupElement = map.appendChild(popup);
-    newPopupElement.addEventListener('click', onPopupClose);
-    document.addEventListener('keydown', onPopupClose);
+    window.card.deactivate(mapPins);
   };
 
   var onOpenPin = function (e) {
@@ -58,23 +43,21 @@
     }
 
     window.pin.toggle(currentPin);
-
-    var popup = window.card.createPopup(posts[+id - 1]);
-    showPopup(popup);
+    window.card.activate(mapPins, posts[+id - 1], onCardClose);
   };
 
-  var onFilterPins = function(postList) {
+  var onFilterPins = function (postList) {
     var HIDDEN_CLASS = 'hidden';
 
     pins.forEach(function (pin) {
       var isPinHide = !postList.some(function (post) {
 
-        return pin.getAttribute('data-id') == post.id;
+        return +pin.getAttribute('data-id') === +post.id;
       });
 
       if (isPinHide && !pin.classList.contains(HIDDEN_CLASS)) {
-        pin.classList.add(HIDDEN_CLASS)
-      } else if(!isPinHide && pin.classList.contains(HIDDEN_CLASS)){
+        pin.classList.add(HIDDEN_CLASS);
+      } else if (!isPinHide && pin.classList.contains(HIDDEN_CLASS)) {
         pin.classList.remove(HIDDEN_CLASS);
       }
     });
@@ -85,13 +68,13 @@
     var newPin = null;
     var id = 1;
 
-    postData.forEach(function(post, i) {
-        post.id = id++;
-        newPin = window.pin.createPin(post);
-        newPin.addEventListener('click', onOpenPin);
-        pins.push(newPin);
-        posts.push(post);
-        fragment.appendChild(newPin);
+    postData.forEach(function (post) {
+      post.id = id++;
+      newPin = window.pin.createPin(post);
+      newPin.addEventListener('click', onOpenPin);
+      pins.push(newPin);
+      posts.push(post);
+      fragment.appendChild(newPin);
     });
 
     posts = postData;
@@ -141,7 +124,7 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
-  
+
   var onInitPins = function (e) {
     e.preventDefault();
 

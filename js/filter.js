@@ -32,7 +32,7 @@
         case 'housing':
 
           return filterName === 'price' ?
-            !isPriceEqual(filterValue, item.offer[filterName]) : item.offer[filterName] != filterValue;
+            !isPriceEqual(filterValue, item.offer[filterName]) : +item.offer[filterName] !== +filterValue;
         default:
 
           return false;
@@ -70,17 +70,16 @@
     data = arr.slice();
     onFilterCalback = onFilter;
 
-    featureCheckboxes.forEach(function(feature) {
-      feature.addEventListener('change', onCheckboxChange)
+    featureCheckboxes.forEach(function (feature) {
+      feature.addEventListener('change', onCheckboxChange);
     });
 
-    featureSelectors.forEach(function(feature) {
-      feature.addEventListener('change', onSelectChange)
+    featureSelectors.forEach(function (feature) {
+      feature.addEventListener('change', onSelectChange);
     });
   };
 
   window.filter = {
     activate: activate
-  }
-  
-}) ();
+  };
+})();

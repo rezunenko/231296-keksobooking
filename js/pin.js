@@ -4,7 +4,6 @@
   var PIN_SIZE = 40;
   var PIN_TAIL_HEIGHT = 18;
   var activePin = null;
-  var id = 0;
 
   var createPin = function (post) {
     var btn = document.createElement('button');
@@ -42,10 +41,6 @@
     createPin: createPin,
     deactivate: deactivate,
     activate: activate,
-    toggle: toggle,
-    clearCounter: function() {
-      id = 0;
-    }
+    toggle: toggle
   };
-
 })();

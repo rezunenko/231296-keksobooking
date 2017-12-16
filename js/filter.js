@@ -3,6 +3,7 @@
 (function () {
   var filter = {};
   var data = null;
+  var onFilterCalback = null;
 
   var featureCheckboxes = Array.from(document.querySelectorAll('.features input'));
   var featureSelectors = Array.from(document.querySelectorAll('.map__filters select'));
@@ -41,36 +42,40 @@
     return res;
   };
 
+  var onCheckboxChange = function (e) {
+    e.preventDefault();
+
+    if (e.target.checked) {
+      filter[e.target.id] = true;
+    } else {
+      delete filter[e.target.id];
+    }
+
+    var asd = data.filter(getFilteredData);
+    onFilterCalback(asd);
+  };
+
+  var onSelectChange = function (e) {
+
+    if (e.target.value !== 'any') {
+      filter[e.target.id] = e.target.value;
+    } else {
+      delete filter[e.target.id];
+    }
+
+    onFilterCalback(data.filter(getFilteredData));
+  };
+
   var activate = function (arr, onFilter) {
     data = arr.slice();
-    onFilter(data);
+    onFilterCalback = onFilter;
 
     featureCheckboxes.forEach(function(feature) {
-      feature.addEventListener('change', function(e) {
-        e.preventDefault();
-
-        if (e.target.checked) {
-          filter[e.target.id] = true;
-        } else {
-          delete filter[e.target.id];
-        }
-
-        var asd = data.filter(getFilteredData);
-        onFilter(asd);
-      })
+      feature.addEventListener('change', onCheckboxChange)
     });
 
     featureSelectors.forEach(function(feature) {
-      feature.addEventListener('change', function(e) {
-
-        if (e.target.value !== 'any') {
-          filter[e.target.id] = e.target.value;
-        } else {
-          delete filter[e.target.id];
-        }
-
-        onFilter(data.filter(getFilteredData));
-      })
+      feature.addEventListener('change', onSelectChange)
     });
   };
 

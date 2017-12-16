@@ -125,7 +125,7 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var setPinEventListeners = function () {
+  var setPinEvents = function () {
     var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     Array.from(pins).forEach(function (pin) {
       pin.addEventListener('click', onOpenPin);
@@ -134,10 +134,10 @@
   };
 
   var onRenderPins = function (data) {
-    removeMapPins();
     window.pin.clearCounter();
+    removeMapPins();
     renderMapPins(data);
-    setPinEventListeners();
+    setPinEvents();
   };
 
   var onInitPins = function (e) {
@@ -150,7 +150,7 @@
         return item;
       });
       renderMapPins(posts);
-      setPinEventListeners();
+      setPinEvents();
       window.filter.activate(response, onRenderPins);
       window.form.showForm();
       mainPin.addEventListener('mousedown', onDragStart);

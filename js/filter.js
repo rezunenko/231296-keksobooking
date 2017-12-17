@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var SELECTS_WITH_STRINGS_VALUE = ['housing-type', 'housing-price'];
   var filter = {};
   var data = null;
   var onFilterCalback = null;
@@ -32,7 +33,7 @@
         case 'housing':
 
           return filterName === 'price' ?
-            !isPriceEqual(filterValue, item.offer[filterName]) : +item.offer[filterName] !== +filterValue;
+            !isPriceEqual(filterValue, item.offer[filterName]) : item.offer[filterName] !== filterValue;
         default:
 
           return false;
@@ -43,7 +44,6 @@
   };
 
   var changeCheckboxFilter = function (checkbox) {
-    console.log('select');
     if (checkbox.checked) {
       filter[checkbox.id] = true;
     } else {
@@ -62,9 +62,11 @@
     });
   };
 
-  var changeSelectFilter = function(select) {
-    if (select.value !== 'any') {
+  var changeSelectFilter = function (select) {
+    if (select.value !== 'any' && SELECTS_WITH_STRINGS_VALUE.indexOf(select.name) !== -1) {
       filter[select.id] = select.value;
+    } else if (select.value !== 'any') {
+      filter[select.id] = +select.value;
     } else {
       delete filter[select.id];
     }
@@ -76,7 +78,7 @@
     e.preventDefault();
     var select = e.target;
 
-    window.debounce(function() {
+    window.debounce(function () {
       changeSelectFilter(select);
     });
   };

@@ -42,28 +42,43 @@
     return res;
   };
 
-  var onCheckboxChange = function (e) {
-    e.preventDefault();
-
-    if (e.target.checked) {
-      filter[e.target.id] = true;
+  var changeCheckboxFilter = function (checkbox) {
+    console.log('select');
+    if (checkbox.checked) {
+      filter[checkbox.id] = true;
     } else {
-      delete filter[e.target.id];
-    }
-
-    var asd = data.filter(getFilteredData);
-    onFilterCalback(asd);
-  };
-
-  var onSelectChange = function (e) {
-
-    if (e.target.value !== 'any') {
-      filter[e.target.id] = e.target.value;
-    } else {
-      delete filter[e.target.id];
+      delete filter[checkbox.id];
     }
 
     onFilterCalback(data.filter(getFilteredData));
+  };
+
+  var onCheckboxChange = function (e) {
+    e.preventDefault();
+    var checkbox = e.target;
+
+    window.debounce(function () {
+      changeCheckboxFilter(checkbox);
+    });
+  };
+
+  var changeSelectFilter = function(select) {
+    if (select.value !== 'any') {
+      filter[select.id] = select.value;
+    } else {
+      delete filter[select.id];
+    }
+
+    onFilterCalback(data.filter(getFilteredData));
+  };
+
+  var onSelectChange = function (e) {
+    e.preventDefault();
+    var select = e.target;
+
+    window.debounce(function() {
+      changeSelectFilter(select);
+    });
   };
 
   var activate = function (arr, onFilter) {

@@ -119,8 +119,8 @@
     document.querySelector('#title').addEventListener('input', onTitleValidate);
   };
 
-  var setAddress = function (address) {
-    addressElement.value = address;
+  var setAddress = function (cordinates) {
+    addressElement.value = 'x: {{' + cordinates.x + '}}, y: {{' + cordinates.y + '}}';
   };
 
   window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);

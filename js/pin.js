@@ -9,7 +9,7 @@
     var btn = document.createElement('button');
     var img = document.createElement('img');
     btn.style.left = post.location.x + 'px';
-    btn.style.top = (post.location.y - (PIN_SIZE + PIN_TAIL_HEIGHT) / 2) + 'px';
+    btn.style.top = (post.location.y - PIN_SIZE / 2 + PIN_TAIL_HEIGHT) + 'px';
     btn.className = 'map__pin';
     btn.setAttribute('data-id', post.id);
     img.src = post.author.avatar;

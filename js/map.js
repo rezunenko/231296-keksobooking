@@ -3,6 +3,9 @@
 (function () {
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
+  var DRAG_Y_BOUND = {min: 100, max: 500};
+  var DRAG_X_BOUND = {min: 100, max: 1100};
+  var PIN_Y_DELTA = 75;
   var mapElement = document.querySelector('.map');
   var mapPinsElement = mapElement.querySelector('.map__pins');
   var mainPinElement = mapElement.querySelector('.map__pin--main');
@@ -29,6 +32,14 @@
   var deactivatePin = function () {
     window.pin.deactivate();
     window.card.deactivate();
+  };
+
+  var getInitialCoordinates = function () {
+
+    return {
+      x: (DRAG_X_BOUND.min + DRAG_X_BOUND.max) / 2,
+      y: (DRAG_Y_BOUND.min + DRAG_Y_BOUND.max) / 2 + PIN_Y_DELTA
+    };
   };
 
   var onCardClose = function (e) {
@@ -89,10 +100,6 @@
 
   var onDragStart = function (e) {
     e.preventDefault();
-    var DRAG_Y_BOUND = {
-      min: 100,
-      max: 670
-    };
     var startCoords = {
       x: e.clientX,
       y: e.clientY
@@ -106,9 +113,9 @@
       };
       var newY = mainPinElement.offsetTop - shift.y;
       var newX = mainPinElement.offsetLeft - shift.x;
-      if (newY < DRAG_Y_BOUND.min || newY > DRAG_Y_BOUND.max) {
-        return;
-      }
+
+      newY = Math.min(Math.max(newY, DRAG_Y_BOUND.min), DRAG_Y_BOUND.max);
+      newX = Math.min(Math.max(newX, DRAG_X_BOUND.min), DRAG_X_BOUND.max);
 
       startCoords = {
         x: evt.clientX,
@@ -117,11 +124,11 @@
 
       mainPinElement.style.top = newY + 'px';
       mainPinElement.style.left = newX + 'px';
+      window.form.setAddress({x: newX, y: newY});
     };
 
     var onMouseUp = function (evt) {
       evt.preventDefault();
-      window.form.setAddress('x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}');
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -137,8 +144,9 @@
       mapElement.classList.remove('map--faded');
       renderPins(response);
       window.filter.activate(posts, onFilterPins);
-      window.filter.run();
+      window.filter.run(3);
       window.form.showForm();
+      window.form.setAddress(getInitialCoordinates());
       mainPinElement.removeEventListener('mouseup', onInitPins);
       mainPinElement.addEventListener('mousedown', onDragStart);
     });

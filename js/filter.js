@@ -2,6 +2,7 @@
 
 (function () {
   var SELECTS_WITH_STRINGS_VALUE = ['housing-type', 'housing-price'];
+  var SHOW_DATA_LIMIT = 5;
   var PRICE_TYPES = {
     'low': {min: 0, max: 10000},
     'middle': {min: 10000, max: 50000},
@@ -44,13 +45,13 @@
     });
   };
 
-  var getData = function () {
+  var getData = function (length) {
 
-    return data.filter(getFilteredData).slice(0, 5);
+    return data.filter(getFilteredData).slice(0, length);
   };
 
-  var run = function() {
-    onFilterCalback(getData());
+  var run = function (length) {
+    onFilterCalback(getData(length || SHOW_DATA_LIMIT));
   };
 
   var changeCheckboxFilter = function (checkboxElement) {

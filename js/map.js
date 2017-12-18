@@ -3,8 +3,9 @@
 (function () {
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
-  var mapPins = document.querySelector('.map__pins');
-  var mainPin = document.querySelector('.map__pin--main');
+  var map = document.querySelector('.map');
+  var mapPins = map.querySelector('.map__pins');
+  var mainPin = map.querySelector('.map__pin--main');
   var REQUIERED_MODULES = [
     'pin',
     'posts',
@@ -129,6 +130,7 @@
     e.preventDefault();
 
     window.posts.get(function (response) {
+      map.classList.remove('map--faded');
       renderPins(response);
       window.filter.activate(posts, onFilterPins);
       window.form.showForm();

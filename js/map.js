@@ -133,6 +133,7 @@
       mapElement.classList.remove('map--faded');
       renderPins(response);
       window.filter.activate(posts, onFilterPins);
+      window.filter.run();
       window.form.showForm();
       mainPinElement.removeEventListener('mouseup', onInitPins);
       mainPinElement.addEventListener('mousedown', onDragStart);

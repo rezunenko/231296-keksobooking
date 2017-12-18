@@ -44,6 +44,15 @@
     });
   };
 
+  var getData = function () {
+
+    return data.filter(getFilteredData).slice(0, 5);
+  };
+
+  var run = function() {
+    onFilterCalback(getData());
+  };
+
   var changeCheckboxFilter = function (checkboxElement) {
     if (checkboxElement.checked) {
       filter[checkboxElement.id] = true;
@@ -51,7 +60,7 @@
       delete filter[checkboxElement.id];
     }
 
-    onFilterCalback(data.filter(getFilteredData));
+    run();
   };
 
   var onCheckboxChange = function (e) {
@@ -72,7 +81,7 @@
       delete filter[selectElement.id];
     }
 
-    onFilterCalback(data.filter(getFilteredData));
+    run();
   };
 
   var onSelectChange = function (e) {
@@ -98,6 +107,7 @@
   };
 
   window.filter = {
-    activate: activate
+    activate: activate,
+    run: run
   };
 })();

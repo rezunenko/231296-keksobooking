@@ -26,14 +26,18 @@
     throw new Error('To use the module the following subjects should be declared in the global scope: ' + _undefinedModules.join(', '));
   }
 
+  var deactivatePin = function () {
+    window.pin.deactivate();
+    window.card.deactivate();
+  };
+
   var onCardClose = function (e) {
     if (e.type === 'keydown' && e.keyCode !== ESC_KEYCODE
       || e.type === 'click' && !e.target.classList.contains('popup__close')) {
       return;
     }
 
-    window.pin.deactivate();
-    window.card.deactivate(mapPinsElement);
+    deactivatePin();
   };
 
   var onOpenPin = function (e) {
@@ -49,7 +53,7 @@
 
   var onFilterPins = function (postList) {
     var HIDDEN_CLASS = 'hidden';
-
+    deactivatePin();
     pins.forEach(function (pin) {
       var isPinHide = !postList.some(function (post) {
 

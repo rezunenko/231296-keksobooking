@@ -7,6 +7,7 @@
     'house': 'Дом'
   };
   var activeCard = null;
+  var parentElement = null;
   var mapCardTemplate = document.querySelector('template').content.querySelector('article.map__card');
 
   var createCard = function (post) {
@@ -46,21 +47,22 @@
     return cardTemplateElement;
   };
 
-  var deactivate = function (parentElement) {
+  var deactivate = function () {
     if (activeCard) {
       parentElement.removeChild(activeCard);
       activeCard = null;
     }
   };
 
-  var activate = function (parentElement, post, onClose) {
+  var activate = function (element, post, onClose) {
     var newCardElement = null;
-    deactivate(parentElement);
+    parentElement = element;
+    deactivate();
 
     newCardElement = createCard(post);
     document.addEventListener('keydown', onClose);
     newCardElement.addEventListener('click', onClose);
-    activeCard = parentElement.appendChild(newCardElement);
+    activeCard = element.appendChild(newCardElement);
   };
 
   window.card = {

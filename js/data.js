@@ -9,13 +9,13 @@
     throw new Error('The load function should be declared in the backend module');
   }
 
-  var get = function (onLoad) {
+  var get = function (callback) {
 
     var onError = function (msg) {
       window.popup.show(msg);
     };
 
-    window.backend.load(onLoad, onError);
+    window.backend.load(callback, onError);
   };
 
   window.posts = {

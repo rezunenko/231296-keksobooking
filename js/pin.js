@@ -5,7 +5,7 @@
   var PIN_TAIL_HEIGHT = 18;
   var activePin = null;
 
-  var createPin = function (post) {
+  var create = function (post) {
     var btn = document.createElement('button');
     var img = document.createElement('img');
     btn.style.left = post.location.x + 'px';
@@ -38,7 +38,7 @@
   };
 
   window.pin = {
-    createPin: createPin,
+    create: create,
     deactivate: deactivate,
     activate: activate,
     toggle: toggle

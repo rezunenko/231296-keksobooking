@@ -1,29 +1,29 @@
 'use strict';
 
 (function () {
+  var DICTIONARY = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом'
+  };
   var activeCard = null;
   var mapCardTemplate = document.querySelector('template').content.querySelector('article.map__card');
 
   var createCard = function (post) {
-    var cardTemplate = mapCardTemplate.cloneNode(true);
-    var dictionary = {
-      'flat': 'Квартира',
-      'bungalo': 'Бунгало',
-      'house': 'Дом'
-    };
-    var postType = cardTemplate.querySelector('h4');
-    var features = cardTemplate.querySelector('.popup__features');
-    var pictures = cardTemplate.querySelector('.popup__pictures');
+    var cardTemplateElement = mapCardTemplate.cloneNode(true);
+    var postTypeElement = cardTemplateElement.querySelector('h4');
+    var featuresElement = cardTemplateElement.querySelector('.popup__features');
+    var picturesElement = cardTemplateElement.querySelector('.popup__pictures');
     var featuresFragment = document.createDocumentFragment();
     var picturesFragment = document.createDocumentFragment();
-    cardTemplate.querySelector('.popup__avatar').src = post.author.avatar;
-    cardTemplate.querySelector('h3').textContent = post.offer.title;
-    cardTemplate.querySelector('small').textContent = post.offer.address;
-    cardTemplate.querySelector('.popup__price').innerHTML = post.offer.price + '&#x20bd;/ночь';
-    postType.textContent = dictionary[post.offer.type];
-    postType.nextElementSibling.textContent = post.offer.rooms + ' комнаты для ' + post.offer.guests + ' гостей';
-    postType.nextElementSibling.nextElementSibling.textContent = 'заезд после ' + post.offer.checkin + ' , выезд до ' + post.offer.checkout;
-    cardTemplate.querySelector('.popup__features').innerHTML = '';
+    cardTemplateElement.querySelector('.popup__avatar').src = post.author.avatar;
+    cardTemplateElement.querySelector('h3').textContent = post.offer.title;
+    cardTemplateElement.querySelector('small').textContent = post.offer.address;
+    cardTemplateElement.querySelector('.popup__price').innerHTML = post.offer.price + '&#x20bd;/ночь';
+    postTypeElement.textContent = DICTIONARY[post.offer.type];
+    postTypeElement.nextElementSibling.textContent = post.offer.rooms + ' комнаты для ' + post.offer.guests + ' гостей';
+    postTypeElement.nextElementSibling.nextElementSibling.textContent = 'заезд после ' + post.offer.checkin + ' , выезд до ' + post.offer.checkout;
+    cardTemplateElement.querySelector('.popup__features').innerHTML = '';
     post.offer.features.forEach(function (feature) {
       var li = document.createElement('li');
       li.className = 'feature  feature--' + feature;
@@ -38,29 +38,29 @@
       li.appendChild(img);
       picturesFragment.appendChild(li);
     });
-    features.appendChild(featuresFragment);
-    pictures.innerHTML = '';
-    pictures.appendChild(picturesFragment);
-    features.nextElementSibling.textContent = post.offer.description;
+    featuresElement.appendChild(featuresFragment);
+    picturesElement.innerHTML = '';
+    picturesElement.appendChild(picturesFragment);
+    featuresElement.nextElementSibling.textContent = post.offer.description;
 
-    return cardTemplate;
+    return cardTemplateElement;
   };
 
-  var deactivate = function (parentEl) {
+  var deactivate = function (parentElement) {
     if (activeCard) {
-      parentEl.removeChild(activeCard);
+      parentElement.removeChild(activeCard);
       activeCard = null;
     }
   };
 
-  var activate = function (parentEl, post, onClose) {
-    var newCard = null;
-    deactivate(parentEl);
+  var activate = function (parentElement, post, onClose) {
+    var newCardElement = null;
+    deactivate(parentElement);
 
-    newCard = createCard(post);
+    newCardElement = createCard(post);
     document.addEventListener('keydown', onClose);
-    newCard.addEventListener('click', onClose);
-    activeCard = parentEl.appendChild(newCard);
+    newCardElement.addEventListener('click', onClose);
+    activeCard = parentElement.appendChild(newCardElement);
   };
 
   window.card = {

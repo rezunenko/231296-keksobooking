@@ -3,9 +3,9 @@
 (function () {
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
-  var map = document.querySelector('.map');
-  var mapPins = map.querySelector('.map__pins');
-  var mainPin = map.querySelector('.map__pin--main');
+  var mapElement = document.querySelector('.map');
+  var mapPinsElement = mapElement.querySelector('.map__pins');
+  var mainPinElement = mapElement.querySelector('.map__pin--main');
   var REQUIERED_MODULES = [
     'pin',
     'posts',
@@ -16,11 +16,11 @@
 
   var _undefinedModules = [];
 
-  for (var j = 0; j < REQUIERED_MODULES.length; j++) {
-    if (!window[REQUIERED_MODULES[j]]) {
-      _undefinedModules.push(REQUIERED_MODULES[j]);
+  REQUIERED_MODULES.forEach(function (module) {
+    if (!window[module]) {
+      _undefinedModules.push(module);
     }
-  }
+  });
 
   if (_undefinedModules.length > 0) {
     throw new Error('To use the module the following subjects should be declared in the global scope: ' + _undefinedModules.join(', '));
@@ -33,7 +33,7 @@
     }
 
     window.pin.deactivate();
-    window.card.deactivate(mapPins);
+    window.card.deactivate(mapPinsElement);
   };
 
   var onOpenPin = function (e) {
@@ -44,7 +44,7 @@
     }
 
     window.pin.toggle(currentPin);
-    window.card.activate(mapPins, posts[+id - 1], onCardClose);
+    window.card.activate(mapPinsElement, posts[+id - 1], onCardClose);
   };
 
   var onFilterPins = function (postList) {
@@ -71,7 +71,7 @@
 
     postData.forEach(function (post) {
       post.id = id++;
-      newPin = window.pin.createPin(post);
+      newPin = window.pin.create(post);
       newPin.addEventListener('click', onOpenPin);
       pins.push(newPin);
       posts.push(post);
@@ -80,7 +80,7 @@
 
     posts = postData;
 
-    return mapPins.appendChild(fragment);
+    return mapPinsElement.appendChild(fragment);
   };
 
   var onDragStart = function (e) {
@@ -100,8 +100,8 @@
         x: startCoords.x - evt.clientX,
         y: startCoords.y - evt.clientY
       };
-      var newY = mainPin.offsetTop - shift.y;
-      var newX = mainPin.offsetLeft - shift.x;
+      var newY = mainPinElement.offsetTop - shift.y;
+      var newX = mainPinElement.offsetLeft - shift.x;
       if (newY < DRAG_Y_BOUND.min || newY > DRAG_Y_BOUND.max) {
         return;
       }
@@ -111,8 +111,8 @@
         y: evt.clientY
       };
 
-      mainPin.style.top = newY + 'px';
-      mainPin.style.left = newX + 'px';
+      mainPinElement.style.top = newY + 'px';
+      mainPinElement.style.left = newX + 'px';
     };
 
     var onMouseUp = function (evt) {
@@ -130,15 +130,14 @@
     e.preventDefault();
 
     window.posts.get(function (response) {
-      map.classList.remove('map--faded');
+      mapElement.classList.remove('map--faded');
       renderPins(response);
       window.filter.activate(posts, onFilterPins);
       window.form.showForm();
-      mainPin.addEventListener('mousedown', onDragStart);
-      mainPin.removeEventListener('mouseup', onInitPins);
+      mainPinElement.removeEventListener('mouseup', onInitPins);
+      mainPinElement.addEventListener('mousedown', onDragStart);
     });
   };
 
-  mainPin.addEventListener('mouseup', onInitPins);
-
+  mainPinElement.addEventListener('mouseup', onInitPins);
 })();

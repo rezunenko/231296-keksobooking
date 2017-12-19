@@ -15,39 +15,45 @@
     house: 5000,
     palace: 10000
   };
+  var MIN_ROOMS_NUMBER = 0;
+  var MAX_ROOMS_NUMBER = 100;
+  var formElement = document.querySelector('.notice__form');
+  var capacitySelectorElement = formElement.querySelector('#capacity');
+  var priceElement = formElement.querySelector('#price');
+  var timeinElement = formElement.querySelector('#timein');
+  var timeoutElement = formElement.querySelector('#timeout');
+  var housingTypeElement = formElement.querySelector('#type');
+  var addressElement = formElement.querySelector('#address');
+  var formElements = formElement.querySelectorAll('input');
+  var roomElement = formElement.querySelector('#room_number');
+  var submitBtn = formElement.querySelector('.form__submit');
 
-  var form = document.querySelector('.notice__form');
-  var capacitySelector = document.querySelector('#capacity');
-  var price = document.querySelector('#price');
-  var timein = document.querySelector('#timein');
-  var timeout = document.querySelector('#timeout');
-  var housingType = document.querySelector('#type');
-  var addressField = document.querySelector('#address');
+  priceElement.min = HOUSING_MIN_PRICE[housingTypeElement.value];
 
-  var getSelectValues = function (select) {
+  var getSelectValues = function (element) {
 
-    return [].slice.apply(select.children || [])
+    return [].slice.apply(element.children || [])
         .map(function (item) {
           return item.value;
         });
   };
 
   var timeinObj = {
-    elem: timein,
-    values: getSelectValues(timein)
+    elem: timeinElement,
+    values: getSelectValues(timeinElement)
   };
   var timeoutObj = {
-    elem: timeout,
-    values: getSelectValues(timeout)
+    elem: timeoutElement,
+    values: getSelectValues(timeoutElement)
   };
 
   var housingTypeObj = {
-    elem: housingType,
-    values: getSelectValues(housingType)
+    elem: housingTypeElement,
+    values: getSelectValues(housingTypeElement)
   };
 
   var housingPriceObj = {
-    elem: price,
+    elem: priceElement,
     values: Object.keys(HOUSING_MIN_PRICE).map(function (key) {
 
       return HOUSING_MIN_PRICE[key];
@@ -68,10 +74,9 @@
   var onChangeRoomNumber = function (e) {
     var roomNumber = +e.target.value;
     var capacitySelectedIndex = null;
-    for (var i = 0; i < capacitySelector.options.length; i++) {
-      var option = capacitySelector.options[i];
+    Array.from(capacitySelectorElement.options).forEach(function (option, i) {
       var optionValue = +option.value;
-      if (roomNumber === 100 && optionValue !== 0 || roomNumber !== 100 && (optionValue > roomNumber || optionValue === 0)) {
+      if (roomNumber === MAX_ROOMS_NUMBER && optionValue !== MIN_ROOMS_NUMBER || roomNumber !== MAX_ROOMS_NUMBER && (optionValue > roomNumber || optionValue === MIN_ROOMS_NUMBER)) {
         option.setAttribute('hidden', '');
       } else {
         option.removeAttribute('hidden');
@@ -79,44 +84,61 @@
           capacitySelectedIndex = i;
         }
       }
-    }
-    capacitySelector.selectedIndex = capacitySelectedIndex;
+    });
+    capacitySelectorElement.selectedIndex = capacitySelectedIndex;
   };
 
-  var showForm = function () {
-    var fieldsets = document.querySelectorAll('.notice__form fieldset[disabled]');
-    document.querySelector('.map').classList.remove('map--faded');
-    document.querySelector('.notice__form').classList.remove('notice__form--disabled');
-
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].removeAttribute('disabled');
-    }
-    document.querySelector('.map__pin--main').removeEventListener('mouseup', showForm);
-    document.querySelector('#title').addEventListener('input', function (e) {
-      var target = e.target;
-      var minLength = parseInt(e.target.getAttribute('minLength'), 10);
-      if (minLength && target.value.length < minLength) {
-        target.setCustomValidity('Имя должно состоять минимум из ' + minLength + ' символов');
+  var onCheckValid = function () {
+    Array.from(formElements).forEach(function (input) {
+      if (!input.validity.valid) {
+        input.style.border = '1px solid red';
       } else {
-        target.setCustomValidity('');
+        input.style.border = '';
       }
     });
   };
 
-  var setAddress = function (address) {
-    addressField.value = address;
+  var onTitleValidate = function (e) {
+    var target = e.target;
+    var minLength = parseInt(e.target.getAttribute('minLength'), 10);
+    if (minLength && target.value.length < minLength) {
+      target.setCustomValidity('Имя должно состоять минимум из ' + minLength + ' символов');
+    } else {
+      target.setCustomValidity('');
+    }
+  };
+
+  var showForm = function () {
+    var fieldsets = formElement.querySelectorAll('fieldset[disabled]');
+    formElement.classList.remove('notice__form--disabled');
+
+    Array.from(fieldsets).forEach(function (field) {
+      field.removeAttribute('disabled');
+    });
+
+    submitBtn.addEventListener('click', onCheckValid);
+
+    document.querySelector('#title').addEventListener('input', onTitleValidate);
+  };
+
+  var setAddress = function (cordinates) {
+    addressElement.value = 'x: {{' + cordinates.x + '}}, y: {{' + cordinates.y + '}}';
+  };
+
+  var onSubmitSuccess = function () {
+    window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
+  };
+
+  var onSubmitError = function (msg) {
+    window.popup.show(msg);
   };
 
   window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);
   window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
-  document.querySelector('#room_number').addEventListener('change', onChangeRoomNumber);
+  roomElement.addEventListener('change', onChangeRoomNumber);
 
-  form.addEventListener('submit', function (e) {
-    window.backend.save(new FormData(form), function () {
-      window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
-    }, function (msg) {
-      window.popup.show(msg);
-    });
+  formElement.addEventListener('submit', function (e) {
+    window.backend.save(new FormData(formElement), onSubmitSuccess, onSubmitError);
     e.preventDefault();
   });
 

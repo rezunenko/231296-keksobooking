@@ -22,19 +22,20 @@
     });
   };
 
-  window.popup = {
-    show: function (msg, style) {
-      var main = document.body.querySelector('main');
-      var popup = document.createElement('div');
-      var popupElement = null;
-      setStyle(popup, DEFAULT_STYLE);
-      setStyle(popup, style);
-      popup.textContent = msg;
-      popupElement = main.appendChild(popup);
+  var show = function (msg, style) {
+    var popup = document.createElement('div');
+    var popupElement = null;
+    setStyle(popup, DEFAULT_STYLE);
+    setStyle(popup, style);
+    popup.textContent = msg;
+    popupElement = document.body.appendChild(popup);
 
-      setTimeout(function () {
-        main.removeChild(popupElement);
-      }, 2000);
-    }
+    setTimeout(function () {
+      document.body.removeChild(popupElement);
+    }, 2000);
+  };
+
+  window.popup = {
+    show: show
   };
 })();

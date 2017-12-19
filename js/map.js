@@ -3,60 +3,54 @@
 (function () {
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
-  var mapPins = document.querySelector('.map__pins');
-  var mainPin = document.querySelector('.map__pin--main');
+  var PIN_Y_DELTA = 48;
+  var PIN_X_DELTA = 32;
+  var PIN_HEIGHT = 75;
+  var DRAG_Y_BOUND = {min: 100, max: 500};
+  var DRAG_X_BOUND = {min: 100, max: 1100};
+  var mapElement = document.querySelector('.map');
+  var mapPinsElement = mapElement.querySelector('.map__pins');
+  var mainPinElement = mapElement.querySelector('.map__pin--main');
   var REQUIERED_MODULES = [
     'pin',
     'posts',
     'card'
   ];
-  var map = document.querySelector('.map');
-  var posts = null;
+  var posts = [];
+  var pins = [];
 
   var _undefinedModules = [];
 
-  for (var j = 0; j < REQUIERED_MODULES.length; j++) {
-    if (!window[REQUIERED_MODULES[j]]) {
-      _undefinedModules.push(REQUIERED_MODULES[j]);
+  REQUIERED_MODULES.forEach(function (module) {
+    if (!window[module]) {
+      _undefinedModules.push(module);
     }
-  }
+  });
 
   if (_undefinedModules.length > 0) {
     throw new Error('To use the module the following subjects should be declared in the global scope: ' + _undefinedModules.join(', '));
   }
 
-  var renderMapPins = function (postList) {
-    var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < postList.length; i++) {
-      fragment.appendChild(window.pin.createPin(postList[i]));
-    }
-
-    mapPins.appendChild(fragment);
+  var deactivatePin = function () {
+    window.pin.deactivate();
+    window.card.deactivate();
   };
 
-  var onPopupClose = function (e) {
-    var popup = document.querySelector('.map__card.popup');
+  var getInitialCoordinates = function () {
+
+    return {
+      x: (DRAG_X_BOUND.min + DRAG_X_BOUND.max) / 2,
+      y: (DRAG_Y_BOUND.min + PIN_Y_DELTA + DRAG_Y_BOUND.max + PIN_Y_DELTA) / 2 + PIN_HEIGHT
+    };
+  };
+
+  var onCardClose = function (e) {
     if (e.type === 'keydown' && e.keyCode !== ESC_KEYCODE
       || e.type === 'click' && !e.target.classList.contains('popup__close')) {
       return;
     }
 
-    popup.setAttribute('hidden', '');
-    popup.removeEventListener('click', onPopupClose);
-    document.removeEventListener('keydown', onPopupClose);
-    window.pin.deactivate();
-  };
-
-  var showPopup = function (popup) {
-    var oldPopup = map.querySelector('.map__card');
-    if (oldPopup) {
-      map.removeChild(oldPopup);
-    }
-
-    var newPopupElement = map.appendChild(popup);
-    newPopupElement.addEventListener('click', onPopupClose);
-    document.addEventListener('keydown', onPopupClose);
+    deactivatePin();
   };
 
   var onOpenPin = function (e) {
@@ -67,17 +61,47 @@
     }
 
     window.pin.toggle(currentPin);
+    window.card.activate(mapPinsElement, posts[+id - 1], onCardClose);
+  };
 
-    var popup = window.card.createPopup(posts[id - 1]);
-    showPopup(popup);
+  var onFilterPins = function (postList) {
+    var HIDDEN_CLASS = 'hidden';
+    deactivatePin();
+    pins.forEach(function (pin) {
+      var isPinHide = !postList.some(function (post) {
+
+        return +pin.getAttribute('data-id') === +post.id;
+      });
+
+      if (isPinHide && !pin.classList.contains(HIDDEN_CLASS)) {
+        pin.classList.add(HIDDEN_CLASS);
+      } else if (!isPinHide && pin.classList.contains(HIDDEN_CLASS)) {
+        pin.classList.remove(HIDDEN_CLASS);
+      }
+    });
+  };
+
+  var renderPins = function (postData) {
+    var fragment = document.createDocumentFragment();
+    var newPin = null;
+    var id = 1;
+
+    postData.forEach(function (post) {
+      post.id = id++;
+      newPin = window.pin.create(post);
+      newPin.addEventListener('click', onOpenPin);
+      pins.push(newPin);
+      posts.push(post);
+      fragment.appendChild(newPin);
+    });
+
+    posts = postData;
+
+    return mapPinsElement.appendChild(fragment);
   };
 
   var onDragStart = function (e) {
     e.preventDefault();
-    var DRAG_Y_BOUND = {
-      min: 100,
-      max: 670
-    };
     var startCoords = {
       x: e.clientX,
       y: e.clientY
@@ -89,24 +113,24 @@
         x: startCoords.x - evt.clientX,
         y: startCoords.y - evt.clientY
       };
-      var newY = mainPin.offsetTop - shift.y;
-      var newX = mainPin.offsetLeft - shift.x;
-      if (newY < DRAG_Y_BOUND.min || newY > DRAG_Y_BOUND.max) {
-        return;
+      var newY = mainPinElement.offsetTop - shift.y;
+      var newX = mainPinElement.offsetLeft - shift.x;
+      if (newY >= DRAG_Y_BOUND.min - PIN_Y_DELTA && newY <= DRAG_Y_BOUND.max - PIN_Y_DELTA
+        && newX >= DRAG_X_BOUND.min - PIN_X_DELTA && newX <= DRAG_X_BOUND.max + PIN_X_DELTA
+      ) {
+        startCoords = {
+          x: evt.clientX,
+          y: evt.clientY
+        };
+
+        mainPinElement.style.top = newY + 'px';
+        mainPinElement.style.left = newX + 'px';
+        window.form.setAddress({x: newX, y: newY + PIN_Y_DELTA});
       }
-
-      startCoords = {
-        x: evt.clientX,
-        y: evt.clientY
-      };
-
-      mainPin.style.top = newY + 'px';
-      mainPin.style.left = newX + 'px';
     };
 
     var onMouseUp = function (evt) {
       evt.preventDefault();
-      window.form.setAddress('x: {{' + startCoords.x + '}}, y: {{' + startCoords.y + '}}');
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -115,24 +139,20 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var onRenderPins = function (e) {
+  var onInitPins = function (e) {
     e.preventDefault();
 
     window.posts.get(function (response) {
-      posts = response;
-      renderMapPins(posts);
+      mapElement.classList.remove('map--faded');
+      renderPins(response);
+      window.filter.activate(posts, onFilterPins);
+      window.filter.run();
       window.form.showForm();
-
-      var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-      for (var i = 0; i < pins.length; i++) {
-        pins[i].addEventListener('click', onOpenPin);
-        pins[i].addEventListener('keydown', onOpenPin);
-      }
-
-      mainPin.addEventListener('mousedown', onDragStart);
-      mainPin.removeEventListener('mouseup', onRenderPins);
+      window.form.setAddress(getInitialCoordinates());
+      mainPinElement.removeEventListener('mouseup', onInitPins);
+      mainPinElement.addEventListener('mousedown', onDragStart);
     });
   };
 
-  mainPin.addEventListener('mouseup', onRenderPins);
+  mainPinElement.addEventListener('mouseup', onInitPins);
 })();

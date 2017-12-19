@@ -24,6 +24,8 @@
   var timeoutElement = document.querySelector('#timeout');
   var housingTypeElement = document.querySelector('#type');
   var addressElement = document.querySelector('#address');
+  var formElements = formElement.querySelectorAll('input');
+  var submitBtn = formElement.querySelector('.form__submit');
 
   var getSelectValues = function (element) {
 
@@ -83,10 +85,12 @@
     capacitySelectorElement.selectedIndex = capacitySelectedIndex;
   };
 
-  var onInputBlur = function (e) {
-    if (!e.target.checkValidity()) {
-      e.target.style.boxShadow = '0 0 5px 1px red';
-    }
+  var onInputInvalid = function () {
+    Array.from(formElements).forEach(function (input) {
+      if (!input.validity.valid) {
+        input.style.boxShadow = '0 0 5px 1px red';
+      }
+    });
   };
 
   var onInputFocus = function (e) {
@@ -111,10 +115,10 @@
       field.removeAttribute('disabled');
     });
 
-    Array.from(formElement.querySelectorAll('input')).forEach(function (input) {
-      input.addEventListener('blur', onInputBlur);
+    Array.from(formElements).forEach(function (input) {
       input.addEventListener('focus', onInputFocus);
     });
+    submitBtn.addEventListener('click', onInputInvalid);
 
     document.querySelector('#title').addEventListener('input', onTitleValidate);
   };

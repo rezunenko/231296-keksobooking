@@ -18,13 +18,14 @@
   var MIN_ROOMS_NUMBER = 0;
   var MAX_ROOMS_NUMBER = 100;
   var formElement = document.querySelector('.notice__form');
-  var capacitySelectorElement = document.querySelector('#capacity');
-  var priceElement = document.querySelector('#price');
-  var timeinElement = document.querySelector('#timein');
-  var timeoutElement = document.querySelector('#timeout');
-  var housingTypeElement = document.querySelector('#type');
-  var addressElement = document.querySelector('#address');
+  var capacitySelectorElement = formElement.querySelector('#capacity');
+  var priceElement = formElement.querySelector('#price');
+  var timeinElement = formElement.querySelector('#timein');
+  var timeoutElement = formElement.querySelector('#timeout');
+  var housingTypeElement = formElement.querySelector('#type');
+  var addressElement = formElement.querySelector('#address');
   var formElements = formElement.querySelectorAll('input');
+  var roomElement = formElement.querySelector('#room_number')
   var submitBtn = formElement.querySelector('.form__submit');
 
   var getSelectValues = function (element) {
@@ -85,16 +86,14 @@
     capacitySelectorElement.selectedIndex = capacitySelectedIndex;
   };
 
-  var onInputInvalid = function () {
+  var onCheckValid = function () {
     Array.from(formElements).forEach(function (input) {
       if (!input.validity.valid) {
         input.style.boxShadow = '0 0 5px 1px red';
+      } else {
+        input.style.boxShadow = '';
       }
     });
-  };
-
-  var onInputFocus = function (e) {
-    e.target.style.boxShadow = '';
   };
 
   var onTitleValidate = function (e) {
@@ -115,10 +114,7 @@
       field.removeAttribute('disabled');
     });
 
-    Array.from(formElements).forEach(function (input) {
-      input.addEventListener('focus', onInputFocus);
-    });
-    submitBtn.addEventListener('click', onInputInvalid);
+    submitBtn.addEventListener('click', onCheckValid);
 
     document.querySelector('#title').addEventListener('input', onTitleValidate);
   };
@@ -127,17 +123,17 @@
     addressElement.value = 'x: {{' + cordinates.x + '}}, y: {{' + cordinates.y + '}}';
   };
 
-  window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);
-  window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
-  document.querySelector('#room_number').addEventListener('change', onChangeRoomNumber);
-
-  var onSubmitSuccess = function () {
-    window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
+  var onSubmitSuccess = function() {
+    window.popup.show('Данные успешно отправлены', { backgroundColor: 'green' });
   };
 
-  var onSubmitError = function (msg) {
+  var onSubmitError = function(msg) {
     window.popup.show(msg);
   };
+
+  window.synchronizeFields(timeinObj, timeoutObj, onChangeTime);
+  window.synchronizeFields(housingTypeObj, housingPriceObj, onChangeHousingType, {isUnidirectional: true});
+  roomElement.addEventListener('change', onChangeRoomNumber);
 
   formElement.addEventListener('submit', function (e) {
     window.backend.save(new FormData(formElement), onSubmitSuccess, onSubmitError);

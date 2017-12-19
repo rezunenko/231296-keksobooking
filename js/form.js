@@ -25,8 +25,10 @@
   var housingTypeElement = formElement.querySelector('#type');
   var addressElement = formElement.querySelector('#address');
   var formElements = formElement.querySelectorAll('input');
-  var roomElement = formElement.querySelector('#room_number')
+  var roomElement = formElement.querySelector('#room_number');
   var submitBtn = formElement.querySelector('.form__submit');
+
+  priceElement.min = HOUSING_MIN_PRICE[housingTypeElement.value];
 
   var getSelectValues = function (element) {
 
@@ -89,9 +91,9 @@
   var onCheckValid = function () {
     Array.from(formElements).forEach(function (input) {
       if (!input.validity.valid) {
-        input.style.boxShadow = '0 0 5px 1px red';
+        input.style.border = '1px solid red';
       } else {
-        input.style.boxShadow = '';
+        input.style.border = '';
       }
     });
   };
@@ -123,11 +125,11 @@
     addressElement.value = 'x: {{' + cordinates.x + '}}, y: {{' + cordinates.y + '}}';
   };
 
-  var onSubmitSuccess = function() {
-    window.popup.show('Данные успешно отправлены', { backgroundColor: 'green' });
+  var onSubmitSuccess = function () {
+    window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
   };
 
-  var onSubmitError = function(msg) {
+  var onSubmitError = function (msg) {
     window.popup.show(msg);
   };
 

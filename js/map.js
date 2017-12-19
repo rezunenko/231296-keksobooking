@@ -5,7 +5,7 @@
   var ESC_KEYCODE = 27;
   var DRAG_Y_BOUND = {min: 100, max: 500};
   var DRAG_X_BOUND = {min: 100, max: 1100};
-  var PIN_Y_DELTA = 75;
+  var PIN_Y_DELTA = 48;
   var mapElement = document.querySelector('.map');
   var mapPinsElement = mapElement.querySelector('.map__pins');
   var mainPinElement = mapElement.querySelector('.map__pin--main');
@@ -114,7 +114,7 @@
       var newY = mainPinElement.offsetTop - shift.y;
       var newX = mainPinElement.offsetLeft - shift.x;
 
-      newY = Math.min(Math.max(newY, DRAG_Y_BOUND.min), DRAG_Y_BOUND.max);
+      newY = Math.min(Math.max(newY, DRAG_Y_BOUND.min - PIN_Y_DELTA), DRAG_Y_BOUND.max - PIN_Y_DELTA);
       newX = Math.min(Math.max(newX, DRAG_X_BOUND.min), DRAG_X_BOUND.max);
 
       startCoords = {

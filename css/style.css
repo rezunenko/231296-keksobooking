@@ -847,3 +847,11 @@ textarea:focus
 {
     background-position: -10px -10px;
 }
+
+.abs {
+  position: absolute;
+  border: 1px solid red;
+  width: 100%;
+  height: 400px;
+  top: 100px;
+}

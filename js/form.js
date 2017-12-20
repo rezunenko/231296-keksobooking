@@ -122,7 +122,7 @@
   };
 
   var setAddress = function (cordinates) {
-    addressElement.value = 'x: {{' + cordinates.x + '}}, y: {{' + cordinates.y + '}}';
+    addressElement.value = 'x: ' + cordinates.x + ', y: ' + cordinates.y;
   };
 
   var reset = function () {

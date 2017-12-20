@@ -125,8 +125,15 @@
     addressElement.value = 'x: {{' + cordinates.x + '}}, y: {{' + cordinates.y + '}}';
   };
 
+  var reset = function () {
+    var currentAddress = addressElement.value;
+    formElement.reset();
+    addressElement.value = currentAddress;
+  };
+
   var onSubmitSuccess = function () {
     window.popup.show('Данные успешно отправлены', {backgroundColor: 'green'});
+    reset();
   };
 
   var onSubmitError = function (msg) {

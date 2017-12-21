@@ -1,6 +1,5 @@
 'use strict';
 
-
 (function () {
   var FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];
   var avatarInputElement = document.querySelector('#avatar');
